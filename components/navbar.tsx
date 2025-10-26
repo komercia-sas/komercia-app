@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { Menu, ShoppingCart, Phone } from 'lucide-react';
-import { companyInfo } from '@/data/company';
 import { useCart } from '@/hooks/use-cart';
+import { useCompany } from '@/hooks/use-company';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { cart } = useCart();
+  const { companyInfo, loading } = useCompany();
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const navigation = [
@@ -50,19 +51,21 @@ export function Navbar() {
 
           {/* Actions */}
           <div className='flex items-center space-x-4'>
-            <Link
-              href={`tel:${companyInfo.contact.phone}`}
-              className='hidden sm:flex'
-            >
-              <Button
-                variant='ghost'
-                size='sm'
-                className='text-muted-foreground hover:text-foreground'
+            {!loading && companyInfo && (
+              <Link
+                href={`tel:${companyInfo.contact.phone}`}
+                className='hidden sm:flex'
               >
-                <Phone className='h-4 w-4 mr-2' />
-                {companyInfo.contact.phone}
-              </Button>
-            </Link>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='text-muted-foreground hover:text-foreground'
+                >
+                  <Phone className='h-4 w-4 mr-2' />
+                  {companyInfo.contact.phone}
+                </Button>
+              </Link>
+            )}
 
             <Link href='/carrito' className='relative'>
               <Button variant='ghost' size='sm'>
@@ -94,17 +97,19 @@ export function Navbar() {
                       {item.name}
                     </Link>
                   ))}
-                  <div className='pt-4 border-t'>
-                    <Link href={`tel:${companyInfo.contact.phone}`}>
-                      <Button
-                        variant='outline'
-                        className='w-full justify-start bg-transparent'
-                      >
-                        <Phone className='h-4 w-4 mr-2' />
-                        {companyInfo.contact.phone}
-                      </Button>
-                    </Link>
-                  </div>
+                  {!loading && companyInfo && (
+                    <div className='pt-4 border-t'>
+                      <Link href={`tel:${companyInfo.contact.phone}`}>
+                        <Button
+                          variant='outline'
+                          className='w-full justify-start bg-transparent'
+                        >
+                          <Phone className='h-4 w-4 mr-2' />
+                          {companyInfo.contact.phone}
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

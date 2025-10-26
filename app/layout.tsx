@@ -2,7 +2,7 @@ import type React from 'react';
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
-import { CartProvider } from '@/hooks/use-cart';
+import { Providers } from './providers';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang='es' className='antialiased'>
       <body className='font-sans'>
         <Suspense fallback={null}>
-          <CartProvider>{children}</CartProvider>
+          <Providers>{children}</Providers>
         </Suspense>
         <Analytics />
       </body>

@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Star } from 'lucide-react';
-import { companyInfo } from '@/data/company';
+import { ArrowRight } from 'lucide-react';
+import { useCompany } from '@/hooks/use-company';
 
 export function HeroSection() {
+  const { companyInfo, loading } = useCompany();
   return (
     <section className='relative overflow-hidden hero-gradient'>
       <div className='container mx-auto px-4 py-24 lg:py-12'>
@@ -24,7 +25,9 @@ export function HeroSection() {
               </h1>
 
               <p className='text-xl text-muted-foreground text-pretty max-w-2xl'>
-                {companyInfo.description}
+                {loading
+                  ? 'Cargando...'
+                  : companyInfo?.description || 'Descripción de la empresa'}
               </p>
             </div>
 
@@ -67,12 +70,11 @@ export function HeroSection() {
           <div className='relative'>
             <div className='relative z-10'>
               <img
-                src='https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=700&fit=crop'
+                src='/hero-image.png'
                 alt='Silla de oficina premium'
-                className='w-full h-[600px] object-cover rounded-2xl card-shadow'
+                className='w-full h-[700px] object-cover rounded-2xl card-shadow'
               />
             </div>
-            <div className='absolute inset-0 bg-gradient-to-t from-background/20 to-transparent rounded-2xl' />
           </div>
         </div>
       </div>
