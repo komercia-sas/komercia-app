@@ -78,7 +78,7 @@ export function AboutSection() {
 
           <div className='relative'>
             <img
-              src='https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=500&fit=crop'
+              src='office.png'
               alt='Oficina moderna'
               className='w-full h-[500px] object-cover rounded-2xl card-shadow'
             />

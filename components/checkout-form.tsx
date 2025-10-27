@@ -4,16 +4,15 @@ import type React from 'react';
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { CreditCard, Truck, MapPin, User } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { formatPrice } from '@/lib/utils';
+import WompiWidget from '@/components/WompiWidget';
+import { WompiLogo } from '@/components/wompi-logo';
 
 interface CheckoutFormProps {
   onSubmit: (formData: any) => void;
@@ -32,60 +31,14 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     city: '',
     department: '',
     postalCode: '',
-    // Método de pago
-    paymentMethod: 'credit-card',
+    // Método de pago (solo Wompi)
+    paymentMethod: 'wompi',
     // Notas adicionales
     notes: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const shippingCost = total >= 500000 ? 0 : 25000;
-  const finalTotal = total + shippingCost;
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim())
-      newErrors.firstName = 'El nombre es requerido';
-    if (!formData.lastName.trim())
-      newErrors.lastName = 'El apellido es requerido';
-    if (!formData.email.trim()) newErrors.email = 'El email es requerido';
-    if (!formData.phone.trim()) newErrors.phone = 'El teléfono es requerido';
-    if (!formData.address.trim())
-      newErrors.address = 'La dirección es requerida';
-    if (!formData.city.trim()) newErrors.city = 'La ciudad es requerida';
-    if (!formData.department.trim())
-      newErrors.department = 'El departamento es requerido';
-
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && !emailRegex.test(formData.email)) {
-      newErrors.email = 'Formato de email inválido';
-    }
-
-    // Validar teléfono (formato colombiano básico)
-    const phoneRegex = /^[0-9+\-\s()]{7,15}$/;
-    if (formData.phone && !phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Formato de teléfono inválido';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      onSubmit({
-        ...formData,
-        cart,
-        total: finalTotal,
-        shippingCost,
-        orderDate: new Date().toISOString(),
-      });
-    }
-  };
+  const orderNumber = `ORD-${Date.now()}`;
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -96,7 +49,7 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6'>
+    <form className='space-y-6'>
       {/* Información Personal */}
       <Card className='card-shadow'>
         <CardHeader>
@@ -237,50 +190,31 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <RadioGroup
-            value={formData.paymentMethod}
-            onValueChange={value => handleInputChange('paymentMethod', value)}
-          >
-            <div className='flex items-center space-x-2 p-4 border rounded-lg'>
-              <RadioGroupItem value='credit-card' id='credit-card' />
-              <Label htmlFor='credit-card' className='flex-1 cursor-pointer'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <div className='font-medium'>Tarjeta de Crédito/Débito</div>
-                    <div className='text-sm text-muted-foreground'>
-                      Visa, Mastercard, American Express
-                    </div>
-                  </div>
-                  <Badge variant='secondary'>Recomendado</Badge>
+          <div className='text-center space-y-4'>
+            <div className='p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50'>
+              <div className='mb-4'>
+                <WompiLogo />
+              </div>
+              <div className='space-y-2'>
+                <h3 className='font-semibold text-lg'>Pago Seguro con Wompi</h3>
+                <p className='text-sm text-muted-foreground'>
+                  Acepta tarjetas de crédito, débito, PSE y Nequi
+                </p>
+                <div className='flex justify-center space-x-2 text-xs text-muted-foreground'>
+                  <span>Visa</span>
+                  <span>•</span>
+                  <span>Mastercard</span>
+                  <span>•</span>
+                  <span>PSE</span>
+                  <span>•</span>
+                  <span>Nequi</span>
                 </div>
-              </Label>
+              </div>
             </div>
-            <div className='flex items-center space-x-2 p-4 border rounded-lg'>
-              <RadioGroupItem value='bank-transfer' id='bank-transfer' />
-              <Label htmlFor='bank-transfer' className='flex-1 cursor-pointer'>
-                <div>
-                  <div className='font-medium'>Transferencia Bancaria</div>
-                  <div className='text-sm text-muted-foreground'>
-                    PSE - Débito desde tu cuenta bancaria
-                  </div>
-                </div>
-              </Label>
-            </div>
-            <div className='flex items-center space-x-2 p-4 border rounded-lg'>
-              <RadioGroupItem value='cash-on-delivery' id='cash-on-delivery' />
-              <Label
-                htmlFor='cash-on-delivery'
-                className='flex-1 cursor-pointer'
-              >
-                <div>
-                  <div className='font-medium'>Pago Contraentrega</div>
-                  <div className='text-sm text-muted-foreground'>
-                    Paga en efectivo al recibir tu pedido
-                  </div>
-                </div>
-              </Label>
-            </div>
-          </RadioGroup>
+            <p className='text-xs text-muted-foreground'>
+              Procesamiento seguro de pagos certificado por Wompi
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -315,27 +249,44 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
                 <Truck className='h-4 w-4' />
                 <span>Envío</span>
               </span>
-              <span
-                className={
-                  shippingCost === 0 ? 'text-green-600 font-medium' : ''
-                }
-              >
-                {shippingCost === 0 ? 'GRATIS' : formatPrice(shippingCost)}
-              </span>
+              <span className='text-green-600 font-medium'>CONTRA ENTREGA</span>
             </div>
+            <p className='text-xs text-muted-foreground'>
+              El costo de envío se paga al recibir el pedido y varía según la
+              ubicación
+            </p>
           </div>
           <Separator />
           <div className='flex justify-between text-lg font-bold'>
-            <span>Total a Pagar</span>
-            <span className='text-primary'>{formatPrice(finalTotal)}</span>
+            <span>Total Productos</span>
+            <span className='text-primary'>{formatPrice(total)}</span>
           </div>
+          <p className='text-xs text-muted-foreground text-center'>
+            + Envío contra entrega (costo variable según ubicación)
+          </p>
         </CardContent>
       </Card>
 
-      {/* Botón de Envío */}
-      <Button type='submit' size='lg' className='w-full btn-primary'>
-        Confirmar Pedido
-      </Button>
+      {/* Botón de Pago con Wompi */}
+      <WompiWidget
+        amount={total}
+        currency='COP'
+        reference={orderNumber}
+        onSuccess={result => {
+          onSubmit({
+            ...formData,
+            orderNumber,
+            cart,
+            total: total,
+            orderDate: new Date().toISOString(),
+          });
+        }}
+        onError={error => {
+          console.error('Error en pago:', error);
+          alert('Error en el pago. Por favor intenta de nuevo.');
+        }}
+        customerData={formData}
+      />
 
       <p className='text-xs text-muted-foreground text-center'>
         Al confirmar tu pedido, aceptas nuestros términos y condiciones de

@@ -271,7 +271,7 @@ export default function AdminCompany() {
                         e.target.value
                       )
                     }
-                    placeholder='Av. Empresarial #123, Bogotá, Colombia'
+                    placeholder='Av. Empresarial #123, Bucaramanga, Colombia'
                   />
                 </div>
 

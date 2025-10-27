@@ -8,11 +8,12 @@ import { ProductFilters } from '@/components/product-filters';
 import { Badge } from '@/components/ui/badge';
 import { useSearchParams } from 'next/navigation';
 import { Product } from '@/lib/vercel-blob';
+import { Package } from 'lucide-react';
 
 const filterProducts = (
   products: Product[],
   searchTerm = '',
-  category = 'todas'
+  category = 'Todas las categorías'
 ) => {
   return products.filter(product => {
     const matchesSearch =
@@ -26,7 +27,7 @@ const filterProducts = (
       );
 
     const matchesCategory =
-      category === 'todas' || product.category === category;
+      category === 'Todas las categorías' || product.category === category;
 
     return matchesSearch && matchesCategory;
   });
@@ -36,17 +37,20 @@ export default function CatalogoPage() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedCategory, setSelectedCategory] = useState(
+    'Todas las categorías'
+  );
   const [filteredProducts, setFilteredProducts] = useState(
     filterProducts(products, searchTerm, selectedCategory)
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/products')
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         setProducts(data);
+        setIsLoading(false);
       });
   }, []);
 
@@ -56,7 +60,18 @@ export default function CatalogoPage() {
     const busqueda = searchParams.get('busqueda');
 
     if (categoria) {
-      setSelectedCategory(categoria);
+      const defaultCategoriesMapper = {
+        ejecutiva: 'Ejecutiva',
+        ergonomica: 'Ergonómica',
+        gaming: 'Gaming',
+        operativa: 'Operativa',
+        oficina: 'Oficina',
+      };
+      setSelectedCategory(
+        defaultCategoriesMapper[
+          categoria as keyof typeof defaultCategoriesMapper
+        ]
+      );
     }
     if (busqueda) {
       setSearchTerm(busqueda);
@@ -73,19 +88,15 @@ export default function CatalogoPage() {
     <main className='min-h-screen'>
       <Navbar />
 
-      <div className='container mx-auto px-4 py-12'>
+      <div className='container mx-auto px-4 py-8'>
         {/* Header */}
         <div className='text-center mb-12'>
           <Badge variant='secondary' className='mb-4'>
             Catálogo
           </Badge>
-          <h1 className='text-3xl lg:text-4xl font-bold mb-6 text-balance'>
+          <h1 className='text-2xl lg:text-3xl font-bold mb-6 text-balance'>
             Encuentra la silla perfecta para ti
           </h1>
-          <p className='text-xl text-muted-foreground max-w-2xl mx-auto text-pretty'>
-            Explora nuestra amplia selección de sillas de oficina diseñadas para
-            brindarte máxima comodidad y estilo
-          </p>
         </div>
 
         {/* Filters */}
@@ -99,7 +110,11 @@ export default function CatalogoPage() {
         />
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {isLoading ? (
+          <div className='flex items-center justify-center h-[200px]'>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto'></div>
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className='grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8'>
             {filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
@@ -107,7 +122,9 @@ export default function CatalogoPage() {
           </div>
         ) : (
           <div className='text-center py-16'>
-            <div className='text-6xl mb-4'>🪑</div>
+            <div className='flex justify-center mb-4'>
+              <Package className='h-16 w-16 text-muted-foreground' />
+            </div>
             <h3 className='text-xl font-semibold mb-2'>
               No se encontraron productos
             </h3>
@@ -117,7 +134,7 @@ export default function CatalogoPage() {
             <button
               onClick={() => {
                 setSearchTerm('');
-                setSelectedCategory('todas');
+                setSelectedCategory('Todas las categorías');
               }}
               className='text-primary hover:underline'
             >

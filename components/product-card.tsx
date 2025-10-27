@@ -5,7 +5,7 @@ import type React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Eye } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
 import { formatPrice } from '@/lib/utils';
@@ -27,31 +27,27 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevenir que se active el link
     addToCart(product);
   };
 
   return (
     <Card className='group overflow-hidden card-shadow hover:shadow-lg transition-all duration-300'>
-      <div className='relative overflow-hidden'>
-        <img
-          src={product.images[0] || '/placeholder.svg'}
-          alt={product.name}
-          className='w-full h-64 object-cover product-image'
-        />
-        {!product.inStock && (
-          <Badge className='absolute top-3 left-3 bg-destructive text-destructive-foreground'>
-            Agotado
-          </Badge>
-        )}
-        <div className='absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300' />
-        <div className='absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-          <Link href={`/producto/${product.id}`}>
-            <Button size='sm' variant='secondary' className='h-8 w-8 p-0'>
-              <Eye className='h-4 w-4' />
-            </Button>
-          </Link>
+      <Link href={`/producto/${product.id}`} className='block'>
+        <div className='relative overflow-hidden'>
+          <img
+            src={product.images[0] || '/placeholder.svg'}
+            alt={product.name}
+            className='w-full h-72 object-cover product-image'
+          />
+          {!product.inStock && (
+            <Badge className='absolute top-3 left-3 bg-destructive text-destructive-foreground'>
+              Agotado
+            </Badge>
+          )}
+          <div className='absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300' />
         </div>
-      </div>
+      </Link>
 
       <CardContent className='p-6'>
         <div className='space-y-3'>

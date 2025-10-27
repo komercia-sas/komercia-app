@@ -11,9 +11,6 @@ import { formatPrice } from '@/lib/utils';
 export function CartSummary() {
   const { cart, total, itemCount } = useCart();
 
-  const shippingCost = total >= 500000 ? 0 : 25000; // Envío gratis por compras mayores a $500,000
-  const finalTotal = total + shippingCost;
-
   if (cart.length === 0) {
     return null;
   }
@@ -37,25 +34,23 @@ export function CartSummary() {
               <Truck className='h-4 w-4' />
               <span>Envío</span>
             </span>
-            <span
-              className={shippingCost === 0 ? 'text-green-600 font-medium' : ''}
-            >
-              {shippingCost === 0 ? 'GRATIS' : formatPrice(shippingCost)}
-            </span>
+            <span className='text-green-600 font-medium'>CONTRA ENTREGA</span>
           </div>
-          {shippingCost > 0 && (
-            <p className='text-xs text-muted-foreground'>
-              Envío gratis en compras mayores a {formatPrice(500000)}
-            </p>
-          )}
+          <p className='text-xs text-muted-foreground'>
+            El costo de envío se paga al recibir el pedido y varía según la
+            ubicación
+          </p>
         </div>
 
         <Separator />
 
         <div className='flex justify-between text-lg font-bold'>
-          <span>Total</span>
-          <span className='text-primary'>{formatPrice(finalTotal)}</span>
+          <span>Total Productos</span>
+          <span className='text-primary'>{formatPrice(total)}</span>
         </div>
+        <p className='text-xs text-muted-foreground text-center'>
+          + Envío contra entrega (costo variable según ubicación)
+        </p>
 
         <Link href='/checkout' className='block'>
           <Button className='w-full btn-primary' size='lg'>

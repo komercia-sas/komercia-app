@@ -25,19 +25,10 @@ export default function CheckoutPage() {
 
   const handleOrderSubmit = async (orderData: any) => {
     setIsLoading(true);
-
     try {
-      // Simular procesamiento del pedido
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Generar número de pedido
-      const orderNumber = `CK-${Date.now()}`;
-
-      // Limpiar carrito
       clearCart();
 
-      // Redirigir a página de confirmación
-      router.push(`/confirmacion?pedido=${orderNumber}`);
+      router.push(`/confirmacion?pedido=${orderData.orderNumber}`);
     } catch (error) {
       console.error('Error processing order:', error);
       setIsLoading(false);

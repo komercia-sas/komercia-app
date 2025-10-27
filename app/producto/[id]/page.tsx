@@ -15,6 +15,10 @@ import {
   Truck,
   Shield,
   HeadphonesIcon,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Maximize2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
@@ -27,6 +31,8 @@ export default function ProductPage() {
   const [product, setProduct] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetch('/api/products')
@@ -37,8 +43,41 @@ export default function ProductPage() {
             (product: Product) => product.id === parseInt(params.id as string)
           )
         );
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [params.id]);
+
+  // Cerrar modal con tecla Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
+
+  if (isLoading) {
+    return (
+      <main className='min-h-screen'>
+        <Navbar />
+        <div className='flex flex-col items-center justify-center h-[calc(100vh-250px)]'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto'></div>
+        </div>
+      </main>
+    );
+  }
 
   if (!product) {
     return (
@@ -57,6 +96,24 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
+  };
+
+  const nextImage = () => {
+    setSelectedImage(prev => (prev + 1) % product.images.length);
+  };
+
+  const prevImage = () => {
+    setSelectedImage(
+      prev => (prev - 1 + product.images.length) % product.images.length
+    );
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   const benefits = [
@@ -95,31 +152,42 @@ export default function ProductPage() {
         <div className='grid lg:grid-cols-2 gap-12'>
           {/* Product Images */}
           <div className='space-y-4'>
-            <div className='aspect-square overflow-hidden rounded-2xl card-shadow'>
+            <div className='relative group aspect-square overflow-hidden rounded-2xl card-shadow'>
               <img
                 src={product.images[selectedImage] || '/placeholder.svg'}
                 alt={product.name}
-                className='w-full h-full object-cover'
+                className='w-full h-full object-cover cursor-pointer'
+                onClick={openModal}
               />
-            </div>
-            <div className='grid grid-cols-3 gap-4'>
-              {product.images.map((image: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                    selectedImage === index
-                      ? 'border-primary'
-                      : 'border-transparent'
-                  }`}
-                >
-                  <img
-                    src={image || '/placeholder.svg'}
-                    alt={`${product.name} ${index + 1}`}
-                    className='w-full h-full object-cover'
-                  />
-                </button>
-              ))}
+
+              {/* Botón izquierdo */}
+              <button
+                onClick={prevImage}
+                className='absolute left-4 top-1/2 -translate-y-1/2 bg-gray-600/80 hover:bg-gray-600 text-white rounded-lg px-4 py-3 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105'
+              >
+                <ChevronLeft className='h-6 w-6' />
+              </button>
+
+              {/* Botón derecho */}
+              <button
+                onClick={nextImage}
+                className='absolute right-4 top-1/2 -translate-y-1/2 bg-gray-600/80 hover:bg-gray-600 text-white rounded-lg px-4 py-3 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105'
+              >
+                <ChevronRight className='h-6 w-6' />
+              </button>
+
+              {/* Botón pantalla completa */}
+              <button
+                onClick={openModal}
+                className='absolute top-4 right-4 bg-gray-600/80 hover:bg-gray-600 text-white rounded-lg px-3 py-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105'
+              >
+                <Maximize2 className='h-5 w-5' />
+              </button>
+
+              {/* Indicador de imagen actual */}
+              <div className='absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+                {selectedImage + 1} / {product.images.length}
+              </div>
             </div>
           </div>
 
@@ -234,6 +302,49 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de imagen en pantalla completa */}
+      {isModalOpen && (
+        <div className='fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4'>
+          <div className='relative max-w-7xl max-h-full w-full h-full flex items-center justify-center'>
+            {/* Botón cerrar */}
+            <button
+              onClick={closeModal}
+              className='absolute top-4 right-4 z-10 bg-gray-600/80 hover:bg-gray-600 text-white rounded-lg px-3 py-2 shadow-lg transition-all duration-300 hover:scale-105'
+            >
+              <X className='h-6 w-6' />
+            </button>
+
+            {/* Botón anterior */}
+            <button
+              onClick={prevImage}
+              className='absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-gray-600/80 hover:bg-gray-600 text-white rounded-lg px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105'
+            >
+              <ChevronLeft className='h-8 w-8' />
+            </button>
+
+            {/* Botón siguiente */}
+            <button
+              onClick={nextImage}
+              className='absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-gray-600/80 hover:bg-gray-600 text-white rounded-lg px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105'
+            >
+              <ChevronRight className='h-8 w-8' />
+            </button>
+
+            {/* Imagen */}
+            <img
+              src={product.images[selectedImage] || '/placeholder.svg'}
+              alt={product.name}
+              className='max-w-full max-h-full object-contain'
+            />
+
+            {/* Indicador */}
+            <div className='absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-lg'>
+              {selectedImage + 1} / {product.images.length}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </main>

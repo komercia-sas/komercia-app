@@ -25,7 +25,6 @@ export function ProductFilters({
   productCount,
   products,
 }: ProductFiltersProps) {
-  const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
@@ -34,16 +33,17 @@ export function ProductFilters({
 
   const clearFilters = () => {
     onSearchChange('');
-    onCategoryChange('todas');
+    onCategoryChange('Todas las categorías');
   };
 
-  const hasActiveFilters = searchTerm !== '' || selectedCategory !== 'todas';
+  const hasActiveFilters =
+    searchTerm !== '' || selectedCategory !== 'Todas las categorías';
 
   return (
     <div className='space-y-6'>
       {/* Search and Filter Toggle */}
-      <div className='flex flex-col sm:flex-row gap-4'>
-        <div className='relative flex-1'>
+      <div className='flex flex-col items-center justify-center w-full sm:flex-row gap-4'>
+        <div className='relative w-full sm:w-2xl'>
           <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
           <Input
             placeholder='Buscar por nombre, descripción o características...'
@@ -52,17 +52,6 @@ export function ProductFilters({
             className='pl-10'
           />
         </div>
-        <Button
-          variant='outline'
-          onClick={() => setShowFilters(!showFilters)}
-          className='sm:w-auto bg-transparent'
-        >
-          <Filter className='h-4 w-4 mr-2' />
-          Filtros
-          {hasActiveFilters && (
-            <Badge className='ml-2 h-5 w-5 rounded-full p-0 text-xs'>!</Badge>
-          )}
-        </Button>
       </div>
 
       {/* Results Count and Clear Filters */}
@@ -85,36 +74,34 @@ export function ProductFilters({
       </div>
 
       {/* Filter Panel */}
-      {showFilters && (
-        <Card className='card-shadow'>
-          <CardContent className='p-6'>
-            <div className='space-y-4'>
-              <div>
-                <h3 className='font-semibold mb-3'>Categorías</h3>
-                <div className='flex flex-wrap gap-2'>
-                  {categories.map(category => (
-                    <Button
-                      key={category}
-                      variant={
-                        selectedCategory === category ? 'default' : 'outline'
-                      }
-                      size='sm'
-                      onClick={() => onCategoryChange(category)}
-                      className={
-                        selectedCategory === category
-                          ? 'btn-primary'
-                          : 'bg-transparent hover:bg-muted'
-                      }
-                    >
-                      {category}
-                    </Button>
-                  ))}
-                </div>
+      <Card className='card-shadow'>
+        <CardContent>
+          <div className='space-y-4'>
+            <div>
+              <h3 className='font-semibold mb-3'>Categorías</h3>
+              <div className='flex flex-wrap gap-2'>
+                {categories.map(category => (
+                  <Button
+                    key={category}
+                    variant={
+                      selectedCategory === category ? 'default' : 'outline'
+                    }
+                    size='sm'
+                    onClick={() => onCategoryChange(category)}
+                    className={
+                      selectedCategory === category
+                        ? 'btn-primary'
+                        : 'bg-transparent hover:bg-secondary'
+                    }
+                  >
+                    {category}
+                  </Button>
+                ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Active Filters */}
       {hasActiveFilters && (
@@ -130,11 +117,11 @@ export function ProductFilters({
               </button>
             </Badge>
           )}
-          {selectedCategory !== 'todas' && (
+          {selectedCategory !== 'Todas las categorías' && (
             <Badge variant='secondary' className='flex items-center gap-2'>
               Categoría: {categories.find(c => c === selectedCategory)}
               <button
-                onClick={() => onCategoryChange('todas')}
+                onClick={() => onCategoryChange('Todas las categorías')}
                 className='hover:text-foreground'
               >
                 <X className='h-3 w-3' />
