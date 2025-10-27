@@ -1,4 +1,4 @@
-import { put, list, del } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 
 // URLs fijas desde variables de entorno - No consumen operaciones avanzadas
 function getBlobUrl(type: 'products' | 'company'): string {
