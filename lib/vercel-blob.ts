@@ -1,92 +1,17 @@
 import { put, list, del } from '@vercel/blob';
 
-// URLs fijas guardadas en localStorage - Solo se obtienen una vez en toda la historia
-const STORAGE_KEYS = {
-  products: 'vercel-blob-products-url',
-  company: 'vercel-blob-company-url',
-};
-
-// Función para obtener URL fija desde localStorage (solo hace list() la primera vez)
-async function getFixedUrl(type: 'products' | 'company'): Promise<string> {
-  // Verificar localStorage primero
-  if (typeof window !== 'undefined') {
-    const storedUrl = localStorage.getItem(STORAGE_KEYS[type]);
-    if (storedUrl) {
-      return storedUrl;
-    }
-  }
-
-  // Solo la primera vez: hacer list() para obtener URL
-  const prefix =
+// URLs fijas desde variables de entorno - No consumen operaciones avanzadas
+function getBlobUrl(type: 'products' | 'company'): string {
+  const url =
     type === 'products'
-      ? 'komercia-data/products'
-      : 'komercia-data/company-info';
-  const { blobs } = await list({ prefix, limit: 1 });
+      ? process.env.VERCEL_BLOB_PRODUCTS_URL
+      : process.env.VERCEL_BLOB_COMPANY_URL;
 
-  if (blobs.length === 0) {
-    throw new Error(`No ${type} found in storage`);
+  if (!url) {
+    throw new Error(`VERCEL_BLOB_${type.toUpperCase()}_URL not configured`);
   }
 
-  // Guardar en localStorage para siempre
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEYS[type], blobs[0].url);
-  }
-
-  return blobs[0].url;
-}
-
-// Función para obtener URL con fallback si fetch falla
-async function getUrlWithFallback(
-  type: 'products' | 'company'
-): Promise<string> {
-  try {
-    // Intentar obtener URL desde localStorage
-    const url = await getFixedUrl(type);
-
-    // Verificar que la URL funciona haciendo un fetch de prueba
-    const testResponse = await fetch(url, { method: 'HEAD' });
-    if (!testResponse.ok) {
-      throw new Error(`URL test failed: ${testResponse.status}`);
-    }
-
-    return url;
-  } catch (error) {
-    console.warn(
-      `URL from localStorage failed for ${type}, refreshing...`,
-      error
-    );
-
-    // Limpiar URL obsoleta del localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEYS[type]);
-    }
-
-    // Obtener nueva URL haciendo list()
-    const prefix =
-      type === 'products'
-        ? 'komercia-data/products'
-        : 'komercia-data/company-info';
-    const { blobs } = await list({ prefix, limit: 1 });
-
-    if (blobs.length === 0) {
-      throw new Error(`No ${type} found in storage`);
-    }
-
-    // Guardar nueva URL en localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEYS[type], blobs[0].url);
-    }
-
-    return blobs[0].url;
-  }
-}
-
-// Función para limpiar URLs del localStorage (útil para debugging o reset)
-export function clearStoredUrls() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEYS.products);
-    localStorage.removeItem(STORAGE_KEYS.company);
-  }
+  return url;
 }
 
 // Tipos para nuestros datos
@@ -131,7 +56,7 @@ export interface Product {
 export async function getCompanyInfo(): Promise<CompanyInfo> {
   try {
     // Obtener URL con fallback si fetch falla
-    const url = await getUrlWithFallback('company');
+    const url = getBlobUrl('company');
 
     // Agregar timestamp para evitar caché del navegador y ver cambios inmediatos
     const urlWithTimestamp = `${url}?t=${Date.now()}`;
@@ -179,7 +104,7 @@ export async function saveCompanyInfo(data: CompanyInfo): Promise<string> {
 export async function getProducts(): Promise<Product[]> {
   try {
     // Obtener URL con fallback si fetch falla
-    const url = await getUrlWithFallback('products');
+    const url = getBlobUrl('products');
 
     // Agregar timestamp para evitar caché del navegador y ver cambios inmediatos
     const urlWithTimestamp = `${url}?t=${Date.now()}`;
