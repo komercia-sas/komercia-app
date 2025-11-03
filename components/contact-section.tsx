@@ -53,8 +53,8 @@ export function ContactSection() {
               </CardContent>
             </Card>
 
-            <div className='grid sm:grid-cols-2 gap-4'>
-              <Card className='card-shadow'>
+            <div className='flex flex-col sm:flex-row gap-4'>
+              <Card className='card-shadow grow'>
                 <CardContent className='p-6'>
                   <div className='flex items-center space-x-3 mb-3'>
                     <Phone className='h-5 w-5 text-primary' />
@@ -66,7 +66,7 @@ export function ContactSection() {
                 </CardContent>
               </Card>
 
-              <Card className='card-shadow'>
+              <Card className='card-shadow grow sm:w-fit'>
                 <CardContent className='p-6'>
                   <div className='flex items-center space-x-3 mb-3'>
                     <Mail className='h-5 w-5 text-primary' />
