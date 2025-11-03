@@ -1,11 +1,21 @@
+import { CartItem } from '@/hooks/use-cart';
 import { put, del } from '@vercel/blob';
 
 // URLs fijas desde variables de entorno - No consumen operaciones avanzadas
-function getBlobUrl(type: 'products' | 'company'): string {
-  const url =
-    type === 'products'
-      ? process.env.VERCEL_BLOB_PRODUCTS_URL
-      : process.env.VERCEL_BLOB_COMPANY_URL;
+function getBlobUrl(type: 'products' | 'company' | 'orders'): string {
+  let url: string | undefined;
+
+  switch (type) {
+    case 'products':
+      url = process.env.VERCEL_BLOB_PRODUCTS_URL;
+      break;
+    case 'company':
+      url = process.env.VERCEL_BLOB_COMPANY_URL;
+      break;
+    case 'orders':
+      url = process.env.VERCEL_BLOB_ORDERS_URL;
+      break;
+  }
 
   if (!url) {
     throw new Error(`VERCEL_BLOB_${type.toUpperCase()}_URL not configured`);
@@ -50,6 +60,14 @@ export interface Product {
   features: string[];
   images: string[];
   inStock: boolean;
+}
+
+export interface Order {
+  id: string;
+  products: CartItem[];
+  total: number;
+  status: 'APPROVED' | 'DECLINED' | 'PENDING';
+  updatedAt?: string;
 }
 
 // Funciones para manejar datos de la empresa
@@ -255,5 +273,61 @@ export function getCategories(products: Product[]): string[] {
   } catch (error) {
     console.error('Error getting categories:', error);
     throw new Error('Error getting categories');
+  }
+}
+
+export async function getOrders(): Promise<Order[]> {
+  try {
+    const url = getBlobUrl('orders');
+    const response = await fetch(url, {
+      cache: 'no-store', // Evitar caché del navegador
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
+    if (!response.ok) {
+      return [];
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error getting orders:', error);
+    throw new Error('Error getting orders');
+  }
+}
+
+export async function saveOrder(data: Order): Promise<string> {
+  try {
+    if (!data.id || !data.products || !data.total || !data.status) {
+      throw new Error('Invalid order data');
+    }
+    const orders = await getOrders();
+    const filteredOrders = orders.filter(
+      (order: Order) => order.id !== data.id
+    );
+
+    const newOrder: Order = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const updatedOrders = [...filteredOrders, newOrder];
+
+    const blob = await put(
+      `komercia-data/orders.json`,
+      JSON.stringify(updatedOrders, null, 2),
+      {
+        access: 'public',
+        allowOverwrite: true,
+        cacheControlMaxAge: 0, // Sin caché para datos dinámicos
+        addRandomSuffix: false, // Mantener el mismo nombre
+      }
+    );
+
+    return blob.url;
+  } catch (error) {
+    console.error('Error saving company info:', error);
+    throw new Error('Error saving company info');
   }
 }

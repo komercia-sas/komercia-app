@@ -7,13 +7,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useCart } from '@/hooks/use-cart';
+import { Order } from '@/lib/vercel-blob';
 
 interface WompiWidgetProps {
   amount: number;
   currency: string;
   reference: string;
-  onSuccess?: (result: any) => void;
-  onError?: (error: any) => void;
   customerData: {
     firstName: string;
     lastName: string;
@@ -22,6 +22,9 @@ interface WompiWidgetProps {
     address: string;
     city: string;
     department: string;
+    idNumber: string;
+    idType: string;
+    notes: string;
   };
 }
 
@@ -29,14 +32,12 @@ export default function WompiWidget({
   amount,
   currency,
   reference,
-  onSuccess,
-  onError,
   customerData,
 }: WompiWidgetProps) {
-  const [signature, setSignature] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const { cart } = useCart();
 
   // Función para mostrar error en popup
   const showError = (errorMessage: string) => {
@@ -58,35 +59,6 @@ export default function WompiWidget({
     };
   }, []);
 
-  // Solicita la firma al backend
-  useEffect(() => {
-    const fetchSignature = async () => {
-      try {
-        const response = await fetch('/api/wompi-signature', {
-          method: 'POST',
-          body: JSON.stringify({
-            reference,
-            amountInCents: amount * 100,
-            currency,
-          }),
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al obtener firma');
-        }
-
-        const { signature } = await response.json();
-        setSignature(signature);
-      } catch (err) {
-        console.error('Error fetching signature:', err);
-        showError('Error al cargar datos de pago');
-      }
-    };
-
-    fetchSignature();
-  }, [amount, currency, reference]);
-
   // Validar que todos los datos requeridos estén completos
   const isFormValid = () => {
     return (
@@ -96,16 +68,44 @@ export default function WompiWidget({
       customerData.phone.trim() !== '' &&
       customerData.address.trim() !== '' &&
       customerData.city.trim() !== '' &&
-      customerData.department.trim() !== ''
+      customerData.department.trim() !== '' &&
+      customerData.idNumber.trim() !== '' &&
+      customerData.idType.trim() !== ''
     );
   };
 
-  const handlePayment = () => {
-    if (!signature) {
-      showError('Error de validación, comuníquese con el administrador');
-      return;
+  const handleOrderCreate = async (orderData: Order) => {
+    console.log('Order data:', orderData);
+    try {
+      const order = await fetch('/api/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...orderData,
+        }),
+      });
+      if (!order.ok) {
+        return {
+          success: false,
+          error: 'Error al guardar orden',
+        };
+      }
+      const orderResponse = await order.json();
+      console.log('Order saved:', orderResponse);
+      return {
+        success: true,
+        order: orderResponse,
+      };
+    } catch (error) {
+      console.error('Error processing order:', error);
+      showError('Error al guardar orden: ' + error);
+      return {
+        success: false,
+        error: error,
+      };
     }
+  };
 
+  const handlePayment = async () => {
     if (!isFormValid()) {
       showError('Por favor completa todos los campos requeridos');
       return;
@@ -117,6 +117,21 @@ export default function WompiWidget({
     setError(null);
 
     try {
+      const response = await fetch('/api/wompi-signature', {
+        method: 'POST',
+        body: JSON.stringify({
+          reference,
+          amountInCents: amount * 100,
+          currency,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al obtener firma');
+      }
+
+      const { signature } = await response.json();
       // @ts-ignore - WidgetCheckout es inyectado por el script de Wompi
       const checkout = new WidgetCheckout({
         currency,
@@ -130,9 +145,12 @@ export default function WompiWidget({
           fullName: customerData.firstName + ' ' + customerData.lastName,
           phoneNumber: customerData.phone,
           phoneNumberPrefix: '+57',
+          legalId: customerData.idNumber,
+          legalIdType: customerData.idType === 'Cédula' ? 'CC' : 'NIT',
         },
         shippingAddress: {
           addressLine1: customerData.address,
+          addressLine2: customerData.notes || '',
           city: customerData.city,
           phoneNumber: customerData.phone,
           region: customerData.department,
@@ -140,17 +158,26 @@ export default function WompiWidget({
         },
       });
 
-      checkout.open((result: any) => {
+      const orderResult = await handleOrderCreate({
+        id: reference,
+        products: cart,
+        total: amount,
+        status: 'PENDING',
+      });
+
+      if (!orderResult.success) {
+        showError((orderResult?.error as string) || 'Error al guardar orden');
         setLoading(false);
-        if (result.status === 'APPROVED') {
-          onSuccess?.(result);
-        } else {
-          onError?.(result);
-        }
+        return;
+      }
+
+      checkout.open((result: any) => {
+        console.log('Payment result:', result);
+        setLoading(false);
       });
     } catch (err) {
       console.error('Error opening checkout:', err);
-      showError('Error al abrir el checkout: ' + err);
+      showError('Error al abrir el checkout: ' + (err as string));
       setLoading(false);
     }
   };
@@ -160,12 +187,12 @@ export default function WompiWidget({
       <button
         type='button'
         onClick={handlePayment}
-        disabled={!signature || loading || !isFormValid()}
+        disabled={loading || !isFormValid()}
         className='w-full px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
       >
         {loading ? 'Procesando...' : 'Pagar Ahora con Wompi'}
       </button>
-      {!isFormValid() && signature && (
+      {!isFormValid() && (
         <p className='text-xs text-muted-foreground text-center mt-2'>
           Completa todos los campos requeridos para habilitar el pago
         </p>

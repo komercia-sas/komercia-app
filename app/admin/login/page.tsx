@@ -33,7 +33,7 @@ export default function AdminLogin() {
 
       if (response.ok) {
         // Login exitoso, el token ya se guardó en cookie por el servidor
-        router.push('/admin/dashboard');
+        router.push('/admin');
       } else {
         const data = await response.json();
         setError(data.error || 'Error al iniciar sesión');

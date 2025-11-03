@@ -11,14 +11,10 @@ import { Separator } from '@/components/ui/separator';
 import { CreditCard, Truck, MapPin, User } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { formatPrice } from '@/lib/utils';
-import WompiWidget from '@/components/WompiWidget';
+import WompiWidget from '@/components/wompi-widget';
 import { WompiLogo } from '@/components/wompi-logo';
 
-interface CheckoutFormProps {
-  onSubmit: (formData: any) => void;
-}
-
-export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
+export function CheckoutForm() {
   const { cart, total } = useCart();
   const [formData, setFormData] = useState({
     // Información personal
@@ -26,6 +22,8 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
     lastName: '',
     email: '',
     phone: '',
+    idNumber: '',
+    idType: 'Cédula',
     // Dirección de envío
     address: '',
     city: '',
@@ -38,7 +36,8 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const orderNumber = `ORD-${Date.now()}`;
+  const orderId = parseInt((Date.now() * Math.random()).toString().slice(0, 8));
+  const orderNumber = `ORD-${orderId}`;
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -55,7 +54,7 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
         <CardHeader>
           <CardTitle className='flex items-center space-x-2'>
             <User className='h-5 w-5' />
-            <span>Información Personal</span>
+            <span>Información Personal y Facturación</span>
           </CardTitle>
         </CardHeader>
         <CardContent className='space-y-4'>
@@ -114,6 +113,37 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
               />
               {errors.phone && (
                 <p className='text-sm text-destructive mt-1'>{errors.phone}</p>
+              )}
+            </div>
+          </div>
+          <div className='grid md:grid-cols-2 gap-4'>
+            <div className='flex flex-col gap-2'>
+              <Label htmlFor='idType'>Tipo de documento *</Label>
+              <select
+                id='idType'
+                value={formData.idType}
+                onChange={e => handleInputChange('idType', e.target.value)}
+                className='px-3 h-9 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+              >
+                <option value='Cédula'>Cédula</option>
+                <option value='NIT'>NIT</option>
+              </select>
+            </div>
+            <div>
+              <Label htmlFor='idNumber'>
+                {formData.idType ?? 'Número de documento'} *
+              </Label>
+              <Input
+                id='idNumber'
+                type='number'
+                value={formData.idNumber}
+                onChange={e => handleInputChange('idNumber', e.target.value)}
+                className={errors.idNumber ? 'border-destructive' : ''}
+              />
+              {errors.idNumber && (
+                <p className='text-sm text-destructive mt-1'>
+                  {errors.idNumber}
+                </p>
               )}
             </div>
           </div>
@@ -252,8 +282,8 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
               <span className='text-green-600 font-medium'>CONTRA ENTREGA</span>
             </div>
             <p className='text-xs text-muted-foreground'>
-              El costo de envío se paga al recibir el pedido y varía según la
-              ubicación
+              El envío es gratuito en Bucaramanga y área metropolitana, en otras
+              ciudades se paga contra entrega y varía según la ubicación
             </p>
           </div>
           <Separator />
@@ -272,19 +302,6 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
         amount={total}
         currency='COP'
         reference={orderNumber}
-        onSuccess={result => {
-          onSubmit({
-            ...formData,
-            orderNumber,
-            cart,
-            total: total,
-            orderDate: new Date().toISOString(),
-          });
-        }}
-        onError={error => {
-          console.error('Error en pago:', error);
-          alert('Error en el pago. Por favor intenta de nuevo.');
-        }}
         customerData={formData}
       />
 

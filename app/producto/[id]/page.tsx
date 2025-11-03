@@ -120,12 +120,12 @@ export default function ProductPage() {
     {
       icon: Truck,
       title: 'Envío gratuito',
-      description: 'En Bogotá y área metropolitana',
+      description: 'En Bucaramanga y área metropolitana',
     },
     {
       icon: Shield,
       title: 'Garantía extendida',
-      description: 'Hasta 5 años de garantía',
+      description: 'Hasta 2 años de garantía',
     },
     {
       icon: HeadphonesIcon,

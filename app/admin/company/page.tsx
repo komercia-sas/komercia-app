@@ -126,10 +126,7 @@ export default function AdminCompany() {
       <header className='bg-white shadow-sm border-b'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex justify-between items-center h-16'>
-            <Button
-              variant='ghost'
-              onClick={() => router.push('/admin/dashboard')}
-            >
+            <Button variant='ghost' onClick={() => router.push('/admin')}>
               <ArrowLeft className='h-4 w-4 mr-2' />
               Volver
             </Button>
@@ -379,38 +376,6 @@ export default function AdminCompany() {
                       )
                     }
                     placeholder='https://instagram.com/sillasoffice'
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor='linkedin'>LinkedIn</Label>
-                  <Input
-                    id='linkedin'
-                    value={localCompanyInfo.social.linkedin}
-                    onChange={e =>
-                      handleNestedInputChange(
-                        'social',
-                        'linkedin',
-                        e.target.value
-                      )
-                    }
-                    placeholder='https://linkedin.com/company/sillasoffice'
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor='youtube'>YouTube</Label>
-                  <Input
-                    id='youtube'
-                    value={localCompanyInfo.social.youtube}
-                    onChange={e =>
-                      handleNestedInputChange(
-                        'social',
-                        'youtube',
-                        e.target.value
-                      )
-                    }
-                    placeholder='https://youtube.com/sillasoffice'
                   />
                 </div>
               </div>

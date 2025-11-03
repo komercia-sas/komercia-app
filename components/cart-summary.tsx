@@ -37,8 +37,8 @@ export function CartSummary() {
             <span className='text-green-600 font-medium'>CONTRA ENTREGA</span>
           </div>
           <p className='text-xs text-muted-foreground'>
-            El costo de envío se paga al recibir el pedido y varía según la
-            ubicación
+            El envío es gratuito en Bucaramanga y área metropolitana, en otras
+            ciudades se paga contra entrega y varía según la ubicación
           </p>
         </div>
 
@@ -49,7 +49,8 @@ export function CartSummary() {
           <span className='text-primary'>{formatPrice(total)}</span>
         </div>
         <p className='text-xs text-muted-foreground text-center'>
-          + Envío contra entrega (costo variable según ubicación)
+          + Envío contra entrega para ciudades diferentes a Bucaramanga y área
+          metropolitana (costo variable según ubicación)
         </p>
 
         <Link href='/checkout' className='block'>

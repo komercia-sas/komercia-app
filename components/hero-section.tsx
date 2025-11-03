@@ -11,9 +11,8 @@ export function HeroSection() {
         <div className='grid lg:grid-cols-2 gap-12 items-center'>
           <div className='space-y-8'>
             <div className='space-y-4'>
-              <h1 className='text-4xl lg:text-6xl font-bold text-balance leading-tight'>
-                Comodidad y elegancia para tu{' '}
-                <span className='text-primary'>espacio de trabajo</span>
+              <h1 className='text-4xl lg:text-6xl font-bold text-balance leading-tight text-primary'>
+                {companyInfo?.tagline}
               </h1>
 
               <p className='text-xl text-muted-foreground text-pretty max-w-2xl'>

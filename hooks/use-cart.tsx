@@ -1,65 +1,79 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from 'react';
 import {
   getCart,
   addToCart as addToCartUtil,
   removeFromCart as removeFromCartUtil,
   updateQuantity as updateQuantityUtil,
   clearCart as clearCartUtil,
-} from "@/lib/cart"
+} from '@/lib/cart';
+import { CartNotificationPanel } from '@/components/cart-notification-panel';
 
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  quantity: number
-  images: string[]
+export interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  images: string[];
 }
 
 interface CartContextType {
-  cart: CartItem[]
-  addToCart: (product: any, quantity?: number) => void
-  removeFromCart: (productId: number) => void
-  updateQuantity: (productId: number, quantity: number) => void
-  clearCart: () => void
-  total: number
-  itemCount: number
+  cart: CartItem[];
+  addToCart: (product: any, quantity?: number) => void;
+  removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
+  clearCart: () => void;
+  total: number;
+  itemCount: number;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined)
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [lastAddedProduct, setLastAddedProduct] = useState<CartItem | null>(
+    null
+  );
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   useEffect(() => {
-    setCart(getCart())
-  }, [])
+    setCart(getCart());
+  }, []);
 
   const addToCart = (product: any, quantity = 1) => {
-    const updatedCart = addToCartUtil(product, quantity)
-    setCart(updatedCart)
-  }
+    const updatedCart = addToCartUtil(product, quantity);
+    setCart(updatedCart);
+
+    // Encontrar el producto agregado en el carrito actualizado
+    const addedItem = updatedCart.find(
+      (item: CartItem) => item.id === product.id
+    );
+    if (addedItem) {
+      setLastAddedProduct(addedItem);
+      setIsNotificationOpen(true);
+    }
+  };
 
   const removeFromCart = (productId: number) => {
-    const updatedCart = removeFromCartUtil(productId)
-    setCart(updatedCart)
-  }
+    const updatedCart = removeFromCartUtil(productId);
+    setCart(updatedCart);
+  };
 
   const updateQuantity = (productId: number, quantity: number) => {
-    const updatedCart = updateQuantityUtil(productId, quantity)
-    setCart(updatedCart)
-  }
+    const updatedCart = updateQuantityUtil(productId, quantity);
+    setCart(updatedCart);
+  };
 
   const clearCart = () => {
-    clearCartUtil()
-    setCart([])
-  }
+    clearCartUtil();
+    setCart([]);
+  };
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -74,14 +88,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+      <CartNotificationPanel
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+        product={lastAddedProduct}
+      />
     </CartContext.Provider>
-  )
+  );
 }
 
 export function useCart() {
-  const context = useContext(CartContext)
+  const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider")
+    throw new Error('useCart must be used within a CartProvider');
   }
-  return context
+  return context;
 }

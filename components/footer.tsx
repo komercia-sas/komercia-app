@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
+import { Facebook, InstagramIcon } from 'lucide-react';
 import { useCompany } from '@/hooks/use-company';
 
 export function Footer() {
@@ -35,19 +35,7 @@ export function Footer() {
                   href={companyInfo.social.instagram}
                   className='opacity-90 hover:opacity-100'
                 >
-                  <Instagram className='h-5 w-5' />
-                </Link>
-                <Link
-                  href={companyInfo.social.linkedin}
-                  className='opacity-90 hover:opacity-100'
-                >
-                  <Linkedin className='h-5 w-5' />
-                </Link>
-                <Link
-                  href={companyInfo.social.youtube}
-                  className='opacity-90 hover:opacity-100'
-                >
-                  <Youtube className='h-5 w-5' />
+                  <InstagramIcon className='h-5 w-5' />
                 </Link>
               </div>
             )}

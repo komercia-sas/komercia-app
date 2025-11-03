@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -13,8 +13,7 @@ import { useCart } from '@/hooks/use-cart';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, clearCart } = useCart();
-  const [isLoading, setIsLoading] = useState(false);
+  const { cart } = useCart();
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -22,18 +21,6 @@ export default function CheckoutPage() {
       router.push('/carrito');
     }
   }, [cart, router]);
-
-  const handleOrderSubmit = async (orderData: any) => {
-    setIsLoading(true);
-    try {
-      clearCart();
-
-      router.push(`/confirmacion?pedido=${orderData.orderNumber}`);
-    } catch (error) {
-      console.error('Error processing order:', error);
-      setIsLoading(false);
-    }
-  };
 
   if (cart.length === 0) {
     return (
@@ -84,21 +71,21 @@ export default function CheckoutPage() {
 
         {/* Progress Steps */}
         <div className='flex items-center justify-center mb-8'>
-          <div className='flex items-center space-x-4'>
+          <div className='flex md:flex-row flex-col items-center space-x-4'>
             <div className='flex items-center space-x-2'>
               <div className='w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold'>
                 ✓
               </div>
               <span className='text-sm font-medium'>Carrito</span>
             </div>
-            <div className='w-12 h-0.5 bg-primary' />
+            <div className='md:w-12 md:h-0.5 h-5 w-0.5 bg-primary' />
             <div className='flex items-center space-x-2'>
               <div className='w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold'>
                 2
               </div>
               <span className='text-sm font-medium'>Checkout</span>
             </div>
-            <div className='w-12 h-0.5 bg-muted' />
+            <div className='md:w-12 md:h-0.5 h-5 w-0.5 bg-muted' />
             <div className='flex items-center space-x-2'>
               <div className='w-8 h-8 bg-muted text-muted-foreground rounded-full flex items-center justify-center text-sm font-bold'>
                 3
@@ -112,19 +99,7 @@ export default function CheckoutPage() {
 
         {/* Checkout Form */}
         <div className='max-w-2xl mx-auto'>
-          {isLoading ? (
-            <div className='text-center py-16'>
-              <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4' />
-              <h3 className='text-lg font-semibold mb-2'>
-                Procesando tu pedido...
-              </h3>
-              <p className='text-muted-foreground'>
-                Por favor espera mientras confirmamos tu compra
-              </p>
-            </div>
-          ) : (
-            <CheckoutForm onSubmit={handleOrderSubmit} />
-          )}
+          <CheckoutForm />
         </div>
       </div>
 

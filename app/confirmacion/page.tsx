@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useCompany } from '@/hooks/use-company';
+import { useCart } from '@/hooks/use-cart';
 
 export default function ConfirmacionPage() {
   const searchParams = useSearchParams();
@@ -35,6 +36,7 @@ export default function ConfirmacionPage() {
     | 'Pago aún en proceso'
   >('Pago Pendiente');
   const { companyInfo, loading } = useCompany();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     const transactionId = searchParams.get('id');
@@ -71,7 +73,13 @@ export default function ConfirmacionPage() {
       const transaction = await response.json();
       setOrderInfo(transaction.data);
       setOrderNumber(transaction.data.reference);
-      setPaymentStatus(statusToText(transaction.data.status));
+      const status = statusToText(transaction.data.status);
+      setPaymentStatus(status);
+
+      // Vaciar el carrito solo si el pago fue exitoso
+      if (transaction.data.status === 'APPROVED') {
+        clearCart();
+      }
     } catch (error) {
       console.error('Error validating payment:', error);
       setPaymentStatus('Pago Fallido');
@@ -88,13 +96,13 @@ export default function ConfirmacionPage() {
     {
       icon: Package,
       title: 'Preparación',
-      description: 'Preparamos tu pedido para el envío (1-2 días hábiles)',
+      description: 'Preparamos tu pedido para el envío (2 días hábiles)',
       status: 'current',
     },
     {
       icon: Truck,
       title: 'Envío',
-      description: 'Tu pedido está en camino (1-2 días hábiles)',
+      description: 'Tu pedido está en camino (2-4 días hábiles)',
       status: 'upcoming',
     },
   ];
@@ -256,7 +264,7 @@ export default function ConfirmacionPage() {
                 <div className='flex justify-between items-center'>
                   <span className='font-medium'>Total:</span>
                   <span className='font-bold text-lg'>
-                    ${orderInfo.amount_in_cents.toLocaleString('es-CO')} COP
+                    ${orderInfo.amount_in_cents / 100} COP
                   </span>
                 </div>
               )}
@@ -306,18 +314,18 @@ export default function ConfirmacionPage() {
                   Si tienes alguna pregunta sobre tu pedido, no dudes en
                   contactarnos:
                 </p>
-                <div className='grid md:grid-cols-3 gap-4'>
+                <div className='grid md:grid-cols-2 gap-4'>
                   <div className='text-center p-4 bg-muted/30 rounded-lg'>
                     <Phone className='h-6 w-6 text-primary mx-auto mb-2' />
                     <div className='text-sm font-medium'>Teléfono</div>
-                    <div className='text-xs text-muted-foreground'>
+                    <div className='text-sm text-muted-foreground'>
                       {companyInfo.contact.phone}
                     </div>
                   </div>
                   <div className='text-center p-4 bg-muted/30 rounded-lg'>
                     <Mail className='h-6 w-6 text-primary mx-auto mb-2' />
                     <div className='text-sm font-medium'>Email</div>
-                    <div className='text-xs text-muted-foreground'>
+                    <div className='text-sm text-muted-foreground'>
                       {companyInfo.contact.email}
                     </div>
                   </div>
@@ -373,15 +381,11 @@ export default function ConfirmacionPage() {
                   <li>
                     • Te notificaremos cuando tu pedido esté listo para envío
                   </li>
+                  <li>• El tiempo de entrega es de 2-4 días hábiles</li>
                   <li>
-                    • El tiempo de entrega es de 2-4 días hábiles en Bucaramanga
-                  </li>
-                  <li>
-                    • El costo de envío se paga contra entrega y varía según la
+                    • El envío es gratuito en Bucaramanga y área metropolitana,
+                    en otras ciudades se paga contra entrega y varía según la
                     ubicación
-                  </li>
-                  <li>
-                    • Puedes rastrear tu pedido con el número proporcionado
                   </li>
                 </>
               ) : (
