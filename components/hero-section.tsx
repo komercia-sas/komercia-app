@@ -29,7 +29,10 @@ export function HeroSection() {
                   <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
               </Link>
-              <Link href='/#contacto'>
+              <Link
+                href={`https://wa.me/${companyInfo?.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                target='_blank'
+              >
                 <Button variant='outline' size='lg'>
                   Contactar Asesor
                 </Button>

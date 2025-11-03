@@ -78,21 +78,9 @@ export function ContactSection() {
                 </CardContent>
               </Card>
             </div>
-
-            <Card className='card-shadow'>
-              <CardContent className='p-6'>
-                <div className='flex items-center space-x-3 mb-3'>
-                  <Clock className='h-5 w-5 text-primary' />
-                  <span className='font-semibold'>Horarios de Atención</span>
-                </div>
-                <p className='text-muted-foreground whitespace-pre-line'>
-                  {companyInfo.contact.hours}
-                </p>
-              </CardContent>
-            </Card>
           </div>
 
-          <div className='space-y-6'>
+          <div className='flex flex-col justify-between'>
             <Card className='card-shadow'>
               <CardHeader>
                 <CardTitle>Nuestros Servicios</CardTitle>
@@ -109,34 +97,38 @@ export function ContactSection() {
               </CardContent>
             </Card>
 
-            <div className='space-y-4'>
-              <Button className='w-full btn-primary' size='lg'>
-                <MessageCircle className='mr-2 h-4 w-4' />
-                Contactar por WhatsApp
-              </Button>
-
-              <Button
-                variant='outline'
-                className='w-full bg-transparent'
-                size='lg'
+            <div className='my-2'>
+              <a
+                href={`https://wa.me/${companyInfo?.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                target='_blank'
               >
-                <Mail className='mr-2 h-4 w-4' />
-                Enviar Email
-              </Button>
+                <Button className='w-full btn-primary my-2' size='lg'>
+                  <img src='/whatsapp.png' alt='WhatsApp' className='h-4 w-4' />
+                  Contactar por WhatsApp
+                </Button>
+              </a>
+
+              <a href={`mailto:${companyInfo?.contact.email}`}>
+                <Button
+                  variant='outline'
+                  className='w-full bg-transparent my-2'
+                  size='lg'
+                >
+                  <Mail className='mr-2 h-4 w-4' />
+                  Enviar Email
+                </Button>
+              </a>
             </div>
 
-            <Card className='bg-primary text-primary-foreground card-shadow'>
-              <CardContent className='p-6 text-center'>
-                <h3 className='text-lg font-semibold mb-2'>
-                  ¿Necesitas asesoría?
-                </h3>
-                <p className='text-sm opacity-90 mb-4'>
-                  Nuestros expertos te ayudan a encontrar la silla perfecta para
-                  tu espacio
+            <Card className='card-shadow'>
+              <CardContent className='p-6'>
+                <div className='flex items-center space-x-3 mb-3'>
+                  <Clock className='h-5 w-5 text-primary' />
+                  <span className='font-semibold'>Horarios de Atención</span>
+                </div>
+                <p className='text-muted-foreground whitespace-pre-line'>
+                  {companyInfo.contact.hours}
                 </p>
-                <Button variant='secondary' size='sm'>
-                  Agendar Cita
-                </Button>
               </CardContent>
             </Card>
           </div>

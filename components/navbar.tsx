@@ -53,16 +53,12 @@ export function Navbar() {
           <div className='flex items-center space-x-4'>
             {!loading && companyInfo && (
               <Link
-                href={`tel:${companyInfo.contact.phone}`}
+                href={`https://wa.me/${companyInfo.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
                 className='hidden sm:flex'
+                target='_blank'
               >
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='text-muted-foreground hover:text-foreground'
-                >
-                  <Phone className='h-4 w-4 mr-2' />
-                  {companyInfo.contact.phone}
+                <Button variant='ghost' size='sm'>
+                  Contactar Asesor
                 </Button>
               </Link>
             )}
@@ -102,13 +98,15 @@ export function Navbar() {
                   ))}
                   {!loading && companyInfo && (
                     <div className='pt-4 border-t'>
-                      <Link href={`tel:${companyInfo.contact.phone}`}>
+                      <Link
+                        href={`https://wa.me/${companyInfo.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                        target='_blank'
+                      >
                         <Button
                           variant='outline'
                           className='w-full justify-start bg-transparent'
                         >
-                          <Phone className='h-4 w-4 mr-2' />
-                          {companyInfo.contact.phone}
+                          Contactar Asesor
                         </Button>
                       </Link>
                     </div>

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Facebook, InstagramIcon } from 'lucide-react';
 import { useCompany } from '@/hooks/use-company';
 
 export function Footer() {
@@ -29,13 +28,21 @@ export function Footer() {
                   href={companyInfo.social.facebook}
                   className='opacity-90 hover:opacity-100'
                 >
-                  <Facebook className='h-5 w-5' />
+                  <img
+                    src='/facebook.png'
+                    alt='Facebook'
+                    className='h-5 w-5 text-white'
+                  />
                 </Link>
                 <Link
                   href={companyInfo.social.instagram}
                   className='opacity-90 hover:opacity-100'
                 >
-                  <InstagramIcon className='h-5 w-5' />
+                  <img
+                    src='/instagram.png'
+                    alt='Instagram'
+                    className='h-5 w-5 text-white'
+                  />
                 </Link>
               </div>
             )}
