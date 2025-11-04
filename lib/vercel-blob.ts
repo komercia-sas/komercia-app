@@ -290,7 +290,8 @@ export function getCategories(products: Product[]): string[] {
 export async function getOrders(): Promise<Order[]> {
   try {
     const url = getBlobUrl('orders');
-    const response = await fetch(url, {
+    const urlWithTimestamp = `${url}?t=${Date.now()}`;
+    const response = await fetch(urlWithTimestamp, {
       cache: 'no-store', // Evitar caché del navegador
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
