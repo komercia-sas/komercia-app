@@ -18,6 +18,7 @@ import {
   LogOut,
   Edit,
   ArrowLeft,
+  ShoppingCart,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCompany } from '@/hooks/use-company';
@@ -30,26 +31,40 @@ interface Product {
   inStock: boolean;
 }
 
+interface Order {
+  id: string;
+  status: 'APPROVED' | 'DECLINED' | 'PENDING' | 'DELIVERED';
+}
+
 export default function AdminDashboard() {
   const { companyInfo } = useCompany();
   const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    fetchProducts();
+    fetchData();
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchData = async () => {
     try {
-      const productsResponse = await fetch('/api/admin/products');
+      const [productsResponse, ordersResponse] = await Promise.all([
+        fetch('/api/admin/products'),
+        fetch('/api/orders'),
+      ]);
 
       if (productsResponse.ok) {
         const productsData = await productsResponse.json();
         setProducts(productsData);
       }
+
+      if (ordersResponse.ok) {
+        const ordersData = await ordersResponse.json();
+        setOrders(ordersData);
+      }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -94,25 +109,30 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className='bg-white shadow-sm border-b'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center h-16'>
+          <div className='flex justify-between items-center h-16 gap-2'>
             <Button
-              variant='outline'
-              onClick={() => {
-                router.push('/');
-              }}
+              variant='ghost'
+              size='sm'
+              onClick={() => router.push('/')}
+              className='flex-shrink-0'
             >
-              <ArrowLeft className='h-4 w-4 mr-2' />
-              Salir
+              <ArrowLeft className='h-4 w-4 sm:mr-2' />
+              <span className='hidden sm:inline'>Volver</span>
             </Button>
-            <div className='flex items-center'>
-              <Building2 className='h-8 w-8 text-blue-600' />
-              <h1 className='ml-2 text-xl font-semibold text-gray-900'>
-                Panel de Administración
+            <div className='flex-1 sm:flex-none min-w-0'>
+              <h1 className='text-md sm:text-xl font-semibold text-gray-900 flex items-center justify-center sm:justify-start'>
+                <Building2 className='h-5 w-5 sm:h-6 sm:w-6 mr-2 text-blue-600 flex-shrink-0' />
+                Administración
               </h1>
             </div>
-            <Button variant='outline' onClick={handleLogout}>
-              <LogOut className='h-4 w-4 mr-2' />
-              Cerrar Sesión
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={handleLogout}
+              className='flex-shrink-0'
+            >
+              <LogOut className='h-4 w-4 sm:mr-2' />
+              <span className='hidden sm:inline'>Cerrar Sesión</span>
             </Button>
           </div>
         </div>
@@ -128,7 +148,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Empresa</CardTitle>
@@ -160,6 +180,19 @@ export default function AdminDashboard() {
 
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>Órdenes</CardTitle>
+              <ShoppingCart className='h-4 w-4 text-muted-foreground' />
+            </CardHeader>
+            <CardContent>
+              <div className='text-2xl font-bold'>{orders.length}</div>
+              <p className='text-xs text-muted-foreground'>
+                {orders.filter(o => o.status === 'PENDING').length} pendientes
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Categorías</CardTitle>
               <Users className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
@@ -173,7 +206,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Action Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           {/* Company Info Card */}
           <Card>
             <CardHeader>
@@ -233,6 +266,48 @@ export default function AdminDashboard() {
                   <Button className='w-full'>
                     <Package className='h-4 w-4 mr-2' />
                     Gestionar Productos
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Orders Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center'>
+                <ShoppingCart className='h-5 w-5 mr-2' />
+                Gestión de Órdenes
+              </CardTitle>
+              <CardDescription>
+                Administra todas las órdenes del sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-2'>
+                <p className='text-sm text-gray-600'>
+                  <strong>Total:</strong> {orders.length} órdenes
+                </p>
+                <div className='text-sm text-gray-600 space-y-1'>
+                  <p>
+                    <strong>Pendientes:</strong>{' '}
+                    {orders.filter(o => o.status === 'PENDING').length}
+                  </p>
+                  <p>
+                    <strong>Aprobadas:</strong>{' '}
+                    {orders.filter(o => o.status === 'APPROVED').length}
+                  </p>
+                  <p>
+                    <strong>Entregadas:</strong>{' '}
+                    {orders.filter(o => o.status === 'DELIVERED').length}
+                  </p>
+                </div>
+              </div>
+              <div className='mt-4'>
+                <Link href='/admin/orders'>
+                  <Button className='w-full'>
+                    <ShoppingCart className='h-4 w-4 mr-2' />
+                    Gestionar Órdenes
                   </Button>
                 </Link>
               </div>

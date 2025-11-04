@@ -125,21 +125,30 @@ export default function AdminCompany() {
       {/* Header */}
       <header className='bg-white shadow-sm border-b'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center h-16'>
-            <Button variant='ghost' onClick={() => router.push('/admin')}>
-              <ArrowLeft className='h-4 w-4 mr-2' />
-              Volver
+          <div className='flex justify-between items-center h-16 gap-2'>
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => router.push('/admin')}
+              className='flex-shrink-0'
+            >
+              <ArrowLeft className='h-4 w-4 sm:mr-2' />
+              <span className='hidden sm:inline'>Volver</span>
             </Button>
-            <div className='ml-4'>
-              <h1 className='text-xl font-semibold text-gray-900 flex items-center'>
-                <Building2 className='h-6 w-6 mr-2 text-blue-600' />
+            <div className='flex-1 sm:flex-none min-w-0'>
+              <h1 className='text-md sm:text-xl font-semibold text-gray-900 flex items-center justify-center sm:justify-start'>
+                <Building2 className='h-5 w-5 sm:h-6 sm:w-6 mr-2 text-blue-600 flex-shrink-0' />
                 Información de la Empresa
               </h1>
             </div>
-
-            <Button variant='outline' onClick={handleLogout}>
-              <LogOut className='h-4 w-4 mr-2' />
-              Cerrar Sesión
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={handleLogout}
+              className='flex-shrink-0'
+            >
+              <LogOut className='h-4 w-4 sm:mr-2' />
+              <span className='hidden sm:inline'>Cerrar Sesión</span>
             </Button>
           </div>
         </div>

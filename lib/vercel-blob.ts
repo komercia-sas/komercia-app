@@ -66,7 +66,7 @@ export interface Order {
   id: string;
   products: CartItem[];
   total: number;
-  status: 'APPROVED' | 'DECLINED' | 'PENDING';
+  status: 'APPROVED' | 'DECLINED' | 'PENDING' | 'DELIVERED';
   updatedAt?: string;
 }
 
