@@ -17,6 +17,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
+    console.log('order to save', data);
     const order = await saveOrder(data);
     return NextResponse.json(order);
   } catch (error) {

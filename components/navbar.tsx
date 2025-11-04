@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { Menu, ShoppingCart, Phone } from 'lucide-react';
+import { Menu, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useCompany } from '@/hooks/use-company';
 
