@@ -39,16 +39,17 @@ export function ContactSection() {
                 <p className='text-muted-foreground mb-4'>
                   {companyInfo.contact.address}
                 </p>
-                <div className='aspect-video bg-muted rounded-lg flex items-center justify-center'>
-                  <div className='text-center'>
-                    <MapPin className='h-12 w-12 text-muted-foreground mx-auto mb-2' />
-                    <p className='text-sm text-muted-foreground'>
-                      Mapa interactivo
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      Av. Empresarial #123, Bogotá
-                    </p>
-                  </div>
+                <div className='aspect-video bg-muted rounded-lg overflow-hidden'>
+                  <iframe
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(companyInfo.contact.address)}&output=embed&z=15`}
+                    width='100%'
+                    height='100%'
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading='lazy'
+                    referrerPolicy='no-referrer-when-downgrade'
+                    className='w-full h-full'
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -99,7 +100,7 @@ export function ContactSection() {
 
             <div className='my-2'>
               <a
-                href={`https://wa.me/${companyInfo?.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                href={`https://wa.me/${companyInfo?.contact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre los productos de Komercia')}`}
                 target='_blank'
               >
                 <Button className='w-full btn-primary my-2' size='lg'>

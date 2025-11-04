@@ -30,7 +30,7 @@ export function HeroSection() {
                 </Button>
               </Link>
               <Link
-                href={`https://wa.me/${companyInfo?.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                href={`https://wa.me/${companyInfo?.contact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre los productos de Komercia')}`}
                 target='_blank'
               >
                 <Button variant='outline' size='lg'>

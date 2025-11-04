@@ -53,7 +53,7 @@ export function Navbar() {
           <div className='flex items-center space-x-4'>
             {!loading && companyInfo && (
               <Link
-                href={`https://wa.me/${companyInfo.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                href={`https://wa.me/${companyInfo.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre los productos de Komercia')}`}
                 className='hidden sm:flex'
                 target='_blank'
               >
@@ -99,7 +99,7 @@ export function Navbar() {
                   {!loading && companyInfo && (
                     <div className='pt-4 border-t'>
                       <Link
-                        href={`https://wa.me/${companyInfo.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre sus productos')}`}
+                        href={`https://wa.me/${companyInfo.contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, me gustaría obtener más información sobre los productos de Komercia')}`}
                         target='_blank'
                       >
                         <Button
