@@ -105,6 +105,13 @@ export async function POST(request: NextRequest) {
     const orders = await getOrders();
     const order = orders.find((order: Order) => order.id === orderNumber);
 
+    if (!order) {
+      return NextResponse.json(
+        { received: true, status: transaction.status },
+        { status: 401 }
+      );
+    }
+
     const newOrder = {
       id: orderNumber,
       products: order?.products || [],
@@ -160,6 +167,7 @@ export async function POST(request: NextRequest) {
       processed: true,
       orderId: orderNumber,
       emailSent: results.customerEmail.success,
+      order,
     });
   } catch (error) {
     console.error('❌ Error procesando webhook de Wompi:', error);
