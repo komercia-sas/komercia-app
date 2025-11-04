@@ -75,7 +75,6 @@ export default function WompiWidget({
   };
 
   const handleOrderCreate = async (orderData: Order) => {
-    console.log('Order data:', orderData);
     try {
       const order = await fetch('/api/orders', {
         method: 'POST',
@@ -90,7 +89,6 @@ export default function WompiWidget({
         };
       }
       const orderResponse = await order.json();
-      console.log('Order saved:', orderResponse);
       return {
         success: true,
         order: orderResponse,
@@ -132,6 +130,7 @@ export default function WompiWidget({
       }
 
       const { signature } = await response.json();
+
       // @ts-ignore - WidgetCheckout es inyectado por el script de Wompi
       const checkout = new WidgetCheckout({
         currency,
@@ -150,7 +149,7 @@ export default function WompiWidget({
         },
         shippingAddress: {
           addressLine1: customerData.address,
-          addressLine2: customerData.notes || '',
+          addressLine2: customerData.notes || 'No hay información adicional',
           city: customerData.city,
           phoneNumber: customerData.phone,
           region: customerData.department,
@@ -163,6 +162,18 @@ export default function WompiWidget({
         products: cart,
         total: amount,
         status: 'PENDING',
+        customer: {
+          name: customerData.firstName + ' ' + customerData.lastName,
+          email: customerData.email,
+          phone: customerData.phone,
+          address: customerData.address,
+          city: customerData.city,
+          department: customerData.department,
+          idNumber: customerData.idNumber,
+          idType: customerData.idType,
+          notes: customerData.notes,
+        },
+        updatedAt: new Date().toISOString(),
       });
 
       if (!orderResult.success) {
@@ -172,7 +183,6 @@ export default function WompiWidget({
       }
 
       checkout.open((result: any) => {
-        console.log('Payment result:', result);
         setLoading(false);
       });
     } catch (err) {

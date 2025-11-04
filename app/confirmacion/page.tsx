@@ -58,7 +58,7 @@ export default function ConfirmacionPage() {
         return 'Pago Expirado';
       case 'VOIDED':
         return 'Pago Cancelado';
-      case 'FAILED':
+      case 'ERROR':
         return 'Pago Fallido';
       default:
         return 'Pago Pendiente';
@@ -187,6 +187,18 @@ export default function ConfirmacionPage() {
   const getOrderSteps = () => {
     if (paymentStatus === 'Pagado') {
       return nextSteps;
+    }
+
+    if (paymentStatus === 'Pago Fallido') {
+      return [
+        {
+          icon: XCircle,
+          title: 'Pago Fallido',
+          description:
+            'Hubo un error procesando tu pago. Por favor, intenta nuevamente.',
+          status: 'failed',
+        },
+      ];
     }
 
     // Para estados de pago no exitoso, solo mostrar el primer paso

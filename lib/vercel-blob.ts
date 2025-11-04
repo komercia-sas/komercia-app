@@ -65,6 +65,17 @@ export interface Product {
 export interface Order {
   id: string;
   products: CartItem[];
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    department: string;
+    idNumber: string;
+    idType: string;
+    notes: string;
+  };
   total: number;
   status: 'APPROVED' | 'DECLINED' | 'PENDING' | 'DELIVERED';
   updatedAt?: string;
@@ -302,9 +313,19 @@ export async function saveOrder(data: Order): Promise<string> {
     if (!data.id || !data.products || !data.total || !data.status) {
       throw new Error('Invalid order data');
     }
+
+    function isMoreThanSixMonthsAgo(date: Date): boolean {
+      if (!date) return false;
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 6);
+      return date < threeMonthsAgo;
+    }
+
     const orders = await getOrders();
     const filteredOrders = orders.filter(
-      (order: Order) => order.id !== data.id
+      (order: Order) =>
+        order.id !== data.id &&
+        !isMoreThanSixMonthsAgo(new Date(order.updatedAt || ''))
     );
 
     const newOrder: Order = {

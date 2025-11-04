@@ -34,12 +34,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    console.log('📥 Webhook recibido de Wompi:', {
-      event: body.event,
-      transactionId: body.data?.transaction?.id,
-      status: body.data?.transaction?.status,
-    });
-
     console.dir(body, { depth: null });
 
     const transaction = body.data?.transaction;
@@ -116,16 +110,24 @@ export async function POST(request: NextRequest) {
       products: order?.products || [],
       total: totalAmount,
       status: transaction.status,
+      customer: {
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+        address: shippingAddress?.address_line_1 || '',
+        city: shippingCity,
+        department: shippingAddress?.region || '',
+        idNumber: idNumber,
+        idType: idType,
+        notes: shippingAddress?.address_line_2 || '',
+      },
       updatedAt: new Date().toISOString(),
     };
-
-    console.log('📝 Guardando orden:', newOrder);
 
     await saveOrder(newOrder);
 
     // Solo procesar pagos aprobados
     if (transaction.status !== 'APPROVED') {
-      console.log('⏭️ Transacción no aprobada:', transaction.status);
       return NextResponse.json({ received: true, status: transaction.status });
     }
 
@@ -150,12 +152,6 @@ export async function POST(request: NextRequest) {
 
     // Enviar notificaciones de email
     const results = await sendOrderEmailNotifications(notificationData);
-
-    console.log('📊 Resultados de notificaciones:', {
-      orderId: orderNumber,
-      customerEmail: results.customerEmail.success ? '✅' : '❌',
-      companyEmail: results.companyEmail.success ? '✅' : '❌',
-    });
 
     // Siempre retornar 200 para que Wompi sepa que procesamos el webhook
     // Incluso si falla el email, no queremos que Wompi reintente

@@ -19,10 +19,10 @@ import { formatPrice } from '@/lib/utils';
 import type { Order } from '@/lib/vercel-blob';
 
 const statusColors: Record<string, string> = {
-  APPROVED: 'bg-green-100 text-green-800',
-  DECLINED: 'bg-red-100 text-red-800',
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  DELIVERED: 'bg-blue-100 text-blue-800',
+  APPROVED: '!bg-green-100 !text-green-800',
+  DECLINED: '!bg-red-100 !text-red-800',
+  PENDING: '!bg-yellow-100 !text-yellow-800',
+  DELIVERED: '!bg-blue-100 !text-blue-800',
 };
 
 const statusLabels: Record<string, string> = {
@@ -421,6 +421,89 @@ export default function AdminOrders() {
                 </div>
               </div>
 
+              {/* Customer Info */}
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Nombre del Cliente
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.name}
+                  </p>
+                </div>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Email del Cliente
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.email}
+                  </p>
+                </div>
+              </div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Teléfono del Cliente
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.phone}
+                  </p>
+                </div>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Dirección de envío
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.address}
+                  </p>
+                </div>
+              </div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Ciudad de envío
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.city}
+                  </p>
+                </div>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Departamento de envío
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.department}
+                  </p>
+                </div>
+              </div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Tipo de ID del Cliente
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.idType}
+                  </p>
+                </div>
+                <div>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    ID del Cliente
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.idNumber}
+                  </p>
+                </div>
+              </div>
+              {selectedOrder.customer.notes ? (
+                <div className='w-full'>
+                  <p className='text-sm font-semibold text-gray-700'>
+                    Notas de la dirección
+                  </p>
+                  <p className='text-sm text-gray-600 mt-1 break-words'>
+                    {selectedOrder.customer.notes}
+                  </p>
+                </div>
+              ) : null}
               {/* Products List */}
               <div>
                 <p className='text-sm font-semibold text-gray-700 mb-3'>

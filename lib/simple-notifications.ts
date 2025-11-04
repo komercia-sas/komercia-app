@@ -67,8 +67,6 @@ export async function sendSimpleEmailNotification(
       html: emailTemplate,
     });
 
-    console.log('Email sent successfully', result);
-
     return {
       success: true,
       messageId: result.data?.id,
@@ -91,14 +89,9 @@ export async function sendEmailWithRetries(
   let lastError: string | undefined;
 
   for (let attempt = 1; attempt <= RETRY_CONFIG.maxAttempts; attempt++) {
-    console.log(
-      `📧 Intento ${attempt}/${RETRY_CONFIG.maxAttempts} para pedido ${data.orderId}`
-    );
-
     const result = await sendSimpleEmailNotification(data);
 
     if (result.success) {
-      console.log(`✅ Email enviado exitosamente en intento ${attempt}`);
       return {
         ...result,
         attempts: attempt,
@@ -106,18 +99,13 @@ export async function sendEmailWithRetries(
     }
 
     lastError = result.error;
-    console.log(`❌ Intento ${attempt} falló: ${lastError}`);
 
     // Si no es el último intento, esperar antes del siguiente
     if (attempt < RETRY_CONFIG.maxAttempts) {
-      console.log(
-        `⏳ Esperando ${RETRY_CONFIG.delayMs}ms antes del siguiente intento...`
-      );
       await new Promise(resolve => setTimeout(resolve, RETRY_CONFIG.delayMs));
     }
   }
 
-  console.log(`❌ Todos los intentos fallaron para pedido ${data.orderId}`);
   return {
     success: false,
     error: lastError || 'Todos los intentos fallaron',
@@ -163,10 +151,6 @@ export async function sendOrderEmailNotifications(
   customerEmail: SimpleNotificationResult;
   companyEmail: SimpleNotificationResult;
 }> {
-  console.log(
-    `📧 Enviando notificaciones de email para pedido ${data.orderId}`
-  );
-
   // Enviar notificaciones en paralelo
   const [customerResult, companyResult] = await Promise.allSettled([
     sendEmailWithRetries(data),
