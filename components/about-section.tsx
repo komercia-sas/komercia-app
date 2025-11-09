@@ -50,13 +50,6 @@ export function AboutSection() {
         <div className='grid lg:grid-cols-2 gap-16 items-center mb-16'>
           <div className='space-y-8'>
             <div>
-              <h3 className='text-2xl font-bold mb-4'>Nuestra Historia</h3>
-              <p className='text-muted-foreground leading-relaxed'>
-                {companyInfo.about.history}
-              </p>
-            </div>
-
-            <div>
               <h3 className='text-2xl font-bold mb-4'>Nuestra Visión</h3>
               <p className='text-muted-foreground leading-relaxed'>
                 {companyInfo.about.vision}
