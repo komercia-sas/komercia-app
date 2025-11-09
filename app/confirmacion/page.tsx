@@ -68,7 +68,7 @@ export default function ConfirmacionPage() {
   const validatePayment = async (transactionId: string) => {
     try {
       const response = await fetch(
-        `https://sandbox.wompi.co/v1/transactions/${transactionId}`
+        `https://production.wompi.co/v1/transactions/${transactionId}`
       );
       const transaction = await response.json();
       setOrderInfo(transaction.data);

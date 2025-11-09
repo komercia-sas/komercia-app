@@ -20,6 +20,7 @@ async function validateWompiSignature(
     const hashHex = hashArray
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
+    console.log('hashHex', hashHex);
 
     // Comparar con la firma recibida
     return signature === hashHex || signature.includes(hashHex);
@@ -33,9 +34,6 @@ async function validateWompiSignature(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
-    console.dir(body, { depth: null });
-
     const transaction = body.data?.transaction;
 
     if (!transaction) {
@@ -64,6 +62,9 @@ export async function POST(request: NextRequest) {
     bodyText += `${body.timestamp}${integrityKey}`;
 
     if (signature) {
+      console.log('signature', signature);
+      console.log('bodyText', bodyText);
+
       const isValid = await validateWompiSignature(signature, bodyText);
 
       if (!isValid) {
