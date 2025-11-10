@@ -73,7 +73,7 @@ export function AboutSection() {
             <img
               src='office.png'
               alt='Oficina moderna'
-              className='w-full h-[500px] object-cover rounded-2xl card-shadow'
+              className='rounded-2xl card-shadow'
             />
           </div>
         </div>

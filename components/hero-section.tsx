@@ -6,12 +6,12 @@ import { useCompany } from '@/hooks/use-company';
 export function HeroSection() {
   const { companyInfo, loading } = useCompany();
   return (
-    <section className='relative overflow-hidden hero-gradient'>
+    <section className='overflow-hidden hero-gradient'>
       <div className='container mx-auto px-4 py-24 lg:py-12'>
-        <div className='grid lg:grid-cols-2 gap-12 items-center'>
-          <div className='space-y-8'>
+        <div className='grid lg:grid-cols-[3fr_2fr] items-center'>
+          <div className='space-y-8 '>
             <div className='space-y-4'>
-              <h1 className='text-4xl lg:text-6xl font-bold text-balance leading-tight text-primary'>
+              <h1 className='text-3xl lg:text-4xl font-bold text-balance leading-tight text-primary'>
                 {companyInfo?.tagline}
               </h1>
 
@@ -40,14 +40,12 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className='relative'>
-            <div className='relative z-10'>
-              <img
-                src='/hero-logo.png'
-                alt='Silla de oficina premium'
-                className='w-full h-[700px] object-cover rounded-2xl card-shadow'
-              />
-            </div>
+          <div className='z-10 flex justify-center items-center'>
+            <img
+              src='/hero-logo.png'
+              alt='Silla de oficina premium'
+              className='h-[650px] rounded-2xl card-shadow'
+            />
           </div>
         </div>
       </div>

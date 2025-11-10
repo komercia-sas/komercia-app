@@ -34,11 +34,11 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className='group overflow-hidden card-shadow hover:shadow-lg transition-all duration-300'>
       <Link href={`/producto/${product.id}`} className='block'>
-        <div className='relative overflow-hidden'>
+        <div className='relative overflow-hidden flex justify-center items-center'>
           <img
             src={product.images[0] || '/placeholder.svg'}
             alt={product.name}
-            className='w-full h-72 object-cover product-image'
+            className='h-96'
           />
           {!product.inStock && (
             <Badge className='absolute top-3 left-3 bg-destructive text-destructive-foreground'>
