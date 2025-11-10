@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className='bg-primary text-primary-foreground'>
       <div className='container mx-auto px-4 py-12'>
-        <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8'>
+        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
           <div className='space-y-4'>
             <div className='flex items-center space-x-2'>
               <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-primary-foreground text-primary'>
@@ -48,7 +48,7 @@ export function Footer() {
             )}
           </div>
 
-          <div>
+          <div className='lg:justify-self-center'>
             <h3 className='font-semibold mb-4'>Navegación</h3>
             <ul className='space-y-2 text-sm'>
               <li>
@@ -75,44 +75,6 @@ export function Footer() {
                   className='opacity-90 hover:opacity-100'
                 >
                   Contacto
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className='font-semibold mb-4'>Categorías</h3>
-            <ul className='space-y-2 text-sm'>
-              <li>
-                <Link
-                  href='/catalogo?categoria=ejecutiva'
-                  className='opacity-90 hover:opacity-100'
-                >
-                  Ejecutivas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href='/catalogo?categoria=ergonomica'
-                  className='opacity-90 hover:opacity-100'
-                >
-                  Ergonómicas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href='/catalogo?categoria=gaming'
-                  className='opacity-90 hover:opacity-100'
-                >
-                  Gaming
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href='/catalogo?categoria=operativa'
-                  className='opacity-90 hover:opacity-100'
-                >
-                  Operativas
                 </Link>
               </li>
             </ul>

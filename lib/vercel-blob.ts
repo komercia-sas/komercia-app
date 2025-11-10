@@ -268,14 +268,7 @@ async function deleteProductImages(images: string[]): Promise<void> {
 // Función para obtener categorías dinámicamente
 export function getCategories(products: Product[]): string[] {
   try {
-    const defaultCategories = [
-      'Todas las categorías',
-      'Ejecutiva',
-      'Ergonómica',
-      'Gaming',
-      'Operativa',
-      'Oficina',
-    ];
+    const defaultCategories = ['Todas las categorías'];
     const uniqueCategories = [
       ...new Set([...defaultCategories, ...products.map(p => p.category)]),
     ];

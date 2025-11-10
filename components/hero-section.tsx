@@ -8,7 +8,7 @@ export function HeroSection() {
   return (
     <section className='overflow-hidden hero-gradient'>
       <div className='container mx-auto px-4 py-24 lg:py-12'>
-        <div className='grid lg:grid-cols-[3fr_2fr] items-center'>
+        <div className='grid lg:grid-cols-[3fr_2fr] lg:gap-0 gap-10 items-center'>
           <div className='space-y-8 '>
             <div className='space-y-4'>
               <h1 className='text-3xl lg:text-4xl font-bold text-balance leading-tight text-primary'>
@@ -22,7 +22,7 @@ export function HeroSection() {
               </p>
             </div>
 
-            <div className='flex flex-col sm:flex-row gap-4'>
+            <div className='flex flex-row gap-4'>
               <Link href='/catalogo'>
                 <Button size='lg' className='btn-primary'>
                   Ver Catálogo
