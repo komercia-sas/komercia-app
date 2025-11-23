@@ -55,6 +55,7 @@ export interface Product {
   name: string;
   price: number;
   category: string;
+  promotionalPrice?: number;
   shortDescription: string;
   longDescription: string;
   features: string[];

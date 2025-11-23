@@ -29,7 +29,7 @@ export function ProductFilters({
 
   useEffect(() => {
     setCategories(getCategories(products));
-  }, []);
+  }, [products]);
 
   const clearFilters = () => {
     onSearchChange('');

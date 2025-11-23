@@ -206,8 +206,21 @@ export default function ProductPage() {
               </p>
             </div>
 
-            <div className='text-4xl font-bold text-primary'>
-              {formatPrice(product.price)}
+            <div className='flex flex-col mb-4'>
+              {product.promotionalPrice ? (
+                <>
+                  <span className='text-xl text-muted-foreground line-through'>
+                    {formatPrice(product.price)}
+                  </span>
+                  <span className='text-4xl font-bold text-primary'>
+                    {formatPrice(product.promotionalPrice)}
+                  </span>
+                </>
+              ) : (
+                <div className='text-4xl font-bold text-primary'>
+                  {formatPrice(product.price)}
+                </div>
+              )}
             </div>
 
             {product.inStock ? (

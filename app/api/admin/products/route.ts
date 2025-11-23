@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     const url = await addProduct({
       name: productData.name,
       price: productData.price,
+      promotionalPrice: productData.promotionalPrice || undefined,
       category: productData.category,
       shortDescription: productData.shortDescription || '',
       longDescription: productData.longDescription || '',

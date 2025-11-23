@@ -36,6 +36,7 @@ interface Product {
   id: number;
   name: string;
   price: number;
+  promotionalPrice?: number;
   category: string;
   shortDescription: string;
   longDescription: string;
@@ -47,6 +48,7 @@ interface Product {
 interface ProductFormData {
   name: string;
   price: number;
+  promotionalPrice?: number;
   category: string;
   shortDescription: string;
   longDescription: string;
@@ -68,6 +70,7 @@ export default function AdminProducts() {
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     price: 0,
+    promotionalPrice: undefined,
     category: '',
     shortDescription: '',
     longDescription: '',
@@ -134,6 +137,7 @@ export default function AdminProducts() {
     setFormData({
       name: product.name,
       price: product.price,
+      promotionalPrice: product.promotionalPrice,
       category: product.category,
       shortDescription: product.shortDescription,
       longDescription: product.longDescription,
@@ -530,7 +534,7 @@ export default function AdminProducts() {
 
             <form onSubmit={handleSaveProduct} className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
+                <div className='md:col-span-2'>
                   <Label htmlFor='name'>Nombre del Producto</Label>
                   <Input
                     id='name'
@@ -540,7 +544,7 @@ export default function AdminProducts() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor='price'>Precio</Label>
+                  <Label htmlFor='price'>Precio Original</Label>
                   <Input
                     id='price'
                     type='number'
@@ -549,6 +553,23 @@ export default function AdminProducts() {
                       handleInputChange('price', Number(e.target.value))
                     }
                     required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor='promotionalPrice'>
+                    Precio Promoción (Opcional)
+                  </Label>
+                  <Input
+                    id='promotionalPrice'
+                    type='number'
+                    value={formData.promotionalPrice || ''}
+                    onChange={e =>
+                      handleInputChange(
+                        'promotionalPrice',
+                        e.target.value ? Number(e.target.value) : undefined
+                      )
+                    }
+                    placeholder='Dejar vacío si no hay oferta'
                   />
                 </div>
               </div>

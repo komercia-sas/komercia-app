@@ -15,6 +15,7 @@ interface ProductCardProps {
     id: number;
     name: string;
     price: number;
+    promotionalPrice?: number;
     shortDescription: string;
     images: string[];
     category: string;
@@ -65,8 +66,21 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
 
           <div className='flex items-center justify-between'>
-            <div className='text-2xl font-bold text-primary'>
-              {formatPrice(product.price)}
+            <div className='flex flex-col'>
+              {product.promotionalPrice ? (
+                <>
+                  <span className='text-sm text-muted-foreground line-through'>
+                    {formatPrice(product.price)}
+                  </span>
+                  <span className='text-2xl font-bold text-primary'>
+                    {formatPrice(product.promotionalPrice)}
+                  </span>
+                </>
+              ) : (
+                <div className='text-2xl font-bold text-primary'>
+                  {formatPrice(product.price)}
+                </div>
+              )}
             </div>
             <Button
               onClick={handleAddToCart}
