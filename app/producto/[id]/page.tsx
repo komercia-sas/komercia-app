@@ -152,11 +152,11 @@ export default function ProductPage() {
         <div className='grid lg:grid-cols-2 gap-12'>
           {/* Product Images */}
           <div className='space-y-4'>
-            <div className='relative group aspect-square overflow-hidden rounded-2xl card-shadow'>
+            <div className='relative group h-[500px] overflow-hidden rounded-2xl card-shadow'>
               <img
                 src={product.images[selectedImage] || '/placeholder.svg'}
                 alt={product.name}
-                className='w-full h-full object-cover cursor-pointer'
+                className='cursor-pointer h-full m-auto object-contain'
                 onClick={openModal}
               />
 
