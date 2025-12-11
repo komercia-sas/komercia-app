@@ -42,7 +42,7 @@ export function HeroSection() {
 
           <div className='z-10 flex justify-center items-center'>
             <img
-              src='/black-friday.jpg'
+              src='/hero-logo.png'
               alt='Silla de oficina premium'
               className='h-[650px] rounded-2xl card-shadow'
             />
