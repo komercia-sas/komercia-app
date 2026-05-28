@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { Providers } from './providers';
 import { Suspense } from 'react';
+import FacebookPixel from '@/components/FacebookPixel';
 
 const siteUrl =
   process.env.NEXT_PUBLIC_APP_URL ??
@@ -65,6 +66,7 @@ export default function RootLayout({
           <Providers>{children}</Providers>
         </Suspense>
         <Analytics />
+        <FacebookPixel />
       </body>
     </html>
   );
